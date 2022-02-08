@@ -8,3 +8,6 @@ class Graph:
     def add_node(self, node_value):
         self.nodes.append(node_value)
 
+    def add_nodes_from(self, node_list):
+        for node_value in node_list:
+            self.nodes.append(node_value)
