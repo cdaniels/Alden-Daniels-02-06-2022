@@ -25,6 +25,23 @@ class TestExampleNetwork(unittest.TestCase):
         # then there should be a node with the corresponding number
         self.assertEqual(nodes, [num])
 
+
+    def test_batch_node_creation(self):
+        # given an array of numbers of a certain length
+        rand_length = random.randint(1,100)
+        node_list = []
+        for i in range(rand_length):
+            rand_num = random.randint(1,100)
+            node_list.append(rand_num)
+
+        # when the batch node creation function is called with this array
+        G = example_network.Graph()
+        G.add_nodes_from(node_list)
+
+        # then the graph should contain nodes with the corresponding numbers
+        nodes = G.nodes
+        self.assertCountEqual(nodes, node_list)
+
 if __name__ == '__main__':
     unittest.main()
 
