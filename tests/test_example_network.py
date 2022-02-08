@@ -14,8 +14,8 @@ class TestExampleNetwork(unittest.TestCase):
         # given the graph class, when it is instantiated
         graph = example_network.Graph()
         # it should have an empty array of nodes and edges
-        self.assertEqual(graph.nodes(), [])
-        self.assertEqual(graph.edges(), [])
+        self.assertEqual(list(graph.nodes), [])
+        # self.assertEqual(graph.edges, [])
 
 
     def test_node_creation(self):
@@ -28,6 +28,7 @@ class TestExampleNetwork(unittest.TestCase):
         nodes = G.nodes()
         # then there should be a node with the corresponding number
         self.assertEqual(nodes, [num])
+        self.assertEqual(list(G.nodes), [num])
 
 
     def test_batch_node_creation(self):
@@ -42,7 +43,7 @@ class TestExampleNetwork(unittest.TestCase):
         G.add_nodes_from(node_list)
 
         # then the graph should contain nodes with the corresponding numbers
-        nodes = G.nodes()
+        nodes = G.nodes
         self.assertCountEqual(nodes, node_list)
 
 
@@ -67,9 +68,9 @@ class TestExampleNetwork(unittest.TestCase):
         G.add_nodes_from(node_list)
 
         # then the graph should contain nodes with data corresponding to what was passed
-        node_data = G.node_data(test_num)
-        self.assertEqual(node_data[test_attr_name], test_attr_val)
-        self.assertEqual(G.nodes_data()[test_num][test_attr_name], test_attr_val)
+        node_data = G.nodes.data()
+        self.assertEqual(node_data[test_num][test_attr_name], test_attr_val)
+        self.assertEqual(G.nodes[test_num][test_attr_name], test_attr_val)
 
 if __name__ == '__main__':
     unittest.main()
