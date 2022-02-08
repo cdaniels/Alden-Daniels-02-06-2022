@@ -69,6 +69,7 @@ class TestExampleNetwork(unittest.TestCase):
         # then the graph should contain nodes with data corresponding to what was passed
         node_data = G.node_data(test_num)
         self.assertEqual(node_data[test_attr_name], test_attr_val)
+        self.assertEqual(G.nodes_data()[test_num][test_attr_name], test_attr_val)
 
 if __name__ == '__main__':
     unittest.main()

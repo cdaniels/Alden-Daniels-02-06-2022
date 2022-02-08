@@ -24,7 +24,8 @@ class Graph:
         node_list = list(self.edges_dict.keys())
         return node_list
 
+    def nodes_data(self):
+        return self.nodes_dict
+
     def node_data(self, node_num):
         return self.nodes_dict[node_num]
-
-
