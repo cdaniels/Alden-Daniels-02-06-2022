@@ -3,10 +3,13 @@
 class Graph:
     def __init__(self):
         self.nodes = NodeView()
-        self.edges_dict = {}
+        self.edges = EdgeView()
 
     def add_node(self, node_value):
         self.nodes[node_value] = {}
+
+    def add_edge(self, edge_tuple):
+        self.edges[edge_tuple] = {}
 
     def add_nodes_from(self, node_list):
         for node_value in node_list:
@@ -51,6 +54,44 @@ class NodeViewIterator:
     def __next__(self):
         if(self._index < len(self._node_view._nodes)):
             item = self._node_view._nodes[self._index]
+            self._index += 1
+            return item
+        raise StopIteration
+
+
+class EdgeView(dict):
+    def __init__(self):
+        self._edges = list([])
+
+    def __call__(self):
+        edge_list = list(self.keys())
+        return edge_list
+
+    def __delitem__(self, key):
+        super().pop(key)
+        self._edges.remove(key)
+
+    def __setitem__(self, key, value):
+        self._edges.append(key)
+        super().__setitem__(key, value)
+
+    def __iter__(self):
+        return EdgeViewIterator(self)
+
+    def __repr__(self):
+        return f"{type(self).__name__}({super().__repr__()})"
+
+    def data(self):
+        return self
+
+class EdgeViewIterator:
+    def __init__(self, edge_view):
+        self._index = 0
+        self._edge_view = edge_view
+
+    def __next__(self):
+        if(self._index < len(self._edge_view._edges)):
+            item = self._edge_view._edges[self._index]
             self._index += 1
             return item
         raise StopIteration
