@@ -105,6 +105,34 @@ class TestExampleNetwork(unittest.TestCase):
         edges = G.edges
         self.assertCountEqual(edges, edge_list)
 
+
+    def test_batch_edge_creation_with_attributes(self):
+        # given an array of start_node-end_node-attribute tuples
+        rand_length = random.randint(1,100)
+        edge_list = []
+
+        test_attr_name = random_word(5)
+        test_attr_val = random_word(5)
+        test_start_node = random.randint(1,100)
+        test_end_node = random.randint(1,100)
+        test_attr_tuple = (test_start_node, test_end_node, {test_attr_name: test_attr_val})
+
+        for i in range(rand_length):
+            start_node = i
+            end_node = random.randint(1,100)
+            rand_attr_name = random_word(5)
+            rand_attr_val = random_word(5)
+            edge_attr_tuple = (start_node, end_node, {rand_attr_name: rand_attr_val})
+            edge_list.append(edge_attr_tuple)
+        edge_list.append(test_attr_tuple)
+
+        # when the batch edge creation function is called with this array
+        G = example_network.Graph()
+        G.add_edges_from(edge_list)
+
+        # then the graph should contain edges with data corresponding to what was passed
+        self.assertIn(test_attr_tuple, [e for e in G.edges])
+
 if __name__ == '__main__':
     unittest.main()
 
