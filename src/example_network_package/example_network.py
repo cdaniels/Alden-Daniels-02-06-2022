@@ -21,7 +21,11 @@ class Graph:
     def add_edges_from(self, edge_list):
         for edge_tuple in edge_list:
             if type(edge_tuple) == tuple:
-                self.edges[edge_tuple] = {}
+                node_tuple = (edge_tuple[0], edge_tuple[1])
+                attribute_dict = {}
+                if(len(edge_tuple) > 2):
+                    attribute_dict = edge_tuple[2]
+                self.edges[node_tuple] = attribute_dict
 
     def node_data(self, node_num):
         return self.nodes[node_num]
@@ -98,7 +102,13 @@ class EdgeViewIterator:
         if(self._index < len(self._edge_view._edges)):
             item = self._edge_view._edges[self._index]
             self._index += 1
-            return item
+            attributes_dict = self._edge_view[item]
+            edge_tuple = ()
+            if(len(attributes_dict.keys()) > 0) :
+                edge_tuple = (item[0], item[1], attributes_dict)
+            else:
+                edge_tuple = (item[0], item[1])
+            return edge_tuple
         raise StopIteration
 
 
