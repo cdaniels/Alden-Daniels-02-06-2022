@@ -72,6 +72,20 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(node_data[test_num][test_attr_name], test_attr_val)
         self.assertEqual(G.nodes[test_num][test_attr_name], test_attr_val)
 
+    def test_edge_creation(self):
+        # given a graph with two nodes and a tuple containing the ids of the nodes 
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_nodes_from([start_node, end_node])
+        edge = (start_node, end_node)
+
+        # when the edge creation function is called with this
+        G.add_edge(edge)
+        # then the graph should now contain a corresponding edge
+        edge_list = [e for e in G.edges]
+        self.assertEqual(edge_list, [edge])
+
 if __name__ == '__main__':
     unittest.main()
 
