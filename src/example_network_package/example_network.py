@@ -18,6 +18,11 @@ class Graph:
             elif type(node_value) == int:
                 self.nodes[node_value] = {}
 
+    def add_edges_from(self, edge_list):
+        for edge_tuple in edge_list:
+            if type(edge_tuple) == tuple:
+                self.edges[edge_tuple] = {}
+
     def node_data(self, node_num):
         return self.nodes[node_num]
 
