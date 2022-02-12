@@ -133,6 +133,46 @@ class TestExampleNetwork(unittest.TestCase):
         # then the graph should contain edges with data corresponding to what was passed
         self.assertIn(test_attr_tuple, [e for e in G.edges])
 
+    def test_edge_creation_creates_dependent_nodes(self):
+        return self.fail("test not yet implemented")
+
+    def test_node_removal(self):
+        return self.fail("test not yet implemented")
+
+    def test_non_existent_node_removal_raises_error(self):
+        return self.fail("test not yet implemented")
+
+    def test_batch_node_removal(self):
+        return self.fail("test not yet implemented")
+
+    def test_edge_removal(self):
+        return self.fail("test not yet implemented")
+
+    def test_non_existent_edge_removal_raises_error(self):
+        return self.fail("test not yet implemented")
+
+    def test_batch_edge_removal(self):
+        return self.fail("test not yet implemented")
+
+    def test_node_removal_removes_dependent_edges(self):
+        return self.fail("test not yet implemented")
+
+    def test_set_node_attribute(self):
+        return self.fail("test not yet implemented")
+
+    def test_set_node_attributes(self):
+        return self.fail("test not yet implemented")
+
+    def test_set_edge_attribute(self):
+        return self.fail("test not yet implemented")
+
+    def test_set_edge_ettributes(self):
+        return self.fail("test not yet implemented")
+
+    def test_plot_opens_window(self):
+        return self.fail("test not yet implemented")
+
+
 if __name__ == '__main__':
     unittest.main()
 
