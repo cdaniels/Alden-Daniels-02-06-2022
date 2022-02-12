@@ -72,6 +72,30 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(node_data[test_num][test_attr_name], test_attr_val)
         self.assertEqual(G.nodes[test_num][test_attr_name], test_attr_val)
 
+
+    def test_node_checking_fails_for_non_existent_node(self):
+        # given an empty graph and any number representing a node id
+        G = example_network.Graph()
+        num = random.randint(1,100)
+
+        # when the graph is checked for a node with the corresponding id
+        graph_has_node = G.has_node(num)
+        # then the check should come back negative
+        self.assertEqual(graph_has_node, False)
+
+
+    def test_node_checking_passes_for_present_node(self):
+        # given a graph containing a node with a certain id
+        num = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_node(num)
+
+        # when the graph is checked for a node with the corresponding id
+        graph_has_node = G.has_node(num)
+        # then the check should come back positive
+        self.assertEqual(graph_has_node, True)
+
+
     def test_edge_creation(self):
         # given a graph with two nodes and a tuple containing the ids of the nodes 
         start_node = random.randint(1,100)
