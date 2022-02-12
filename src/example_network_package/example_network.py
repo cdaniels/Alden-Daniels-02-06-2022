@@ -37,6 +37,12 @@ class Graph:
                 graph_has_node = True
         return graph_has_node
 
+    def remove_node(self, node_value):
+        if self.has_node(node_value):
+            del self.nodes[node_value]
+        else:
+            raise ValueError
+
     def node_data(self, node_num):
         return self.nodes[node_num]
 
