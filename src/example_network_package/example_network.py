@@ -27,6 +27,13 @@ class Graph:
                     attribute_dict = edge_tuple[2]
                 self.edges[node_tuple] = attribute_dict
 
+    def has_node(self, node_value):
+        graph_has_node = False
+        for n in self.nodes:
+            if n == node_value:
+                graph_has_node = True
+        return graph_has_node
+
     def node_data(self, node_num):
         return self.nodes[node_num]
 
