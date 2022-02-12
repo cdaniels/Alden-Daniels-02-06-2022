@@ -171,11 +171,26 @@ class TestExampleNetwork(unittest.TestCase):
         given_nodes = [start_node, end_node]
         self.assertEqual(nodes_in_graph, given_nodes)
 
-    # def test_node_removal(self):
-    #     return self.fail("test not yet implemented")
+    def test_node_removal(self):
+        # given a graph containing a node with a certain id
+        num = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_node(num)
 
-    # def test_non_existent_node_removal_raises_error(self):
-    #     return self.fail("test not yet implemented")
+        # when the node removal function is called with this id
+        G.remove_node(num)
+        # then the graph should now be empty
+        nodes = G.nodes()
+        self.assertCountEqual(nodes, [])
+
+    def test_non_existent_node_removal_raises_error(self):
+        # given a graph containing no nodes and a number representing a node id
+        num = random.randint(1,100)
+        G = example_network.Graph()
+
+        # when the node removal function is called with this id
+        # then an error should be thrown
+        self.assertRaises(ValueError, G.remove_node, num)
 
     # def test_batch_node_removal(self):
     #     return self.fail("test not yet implemented")
