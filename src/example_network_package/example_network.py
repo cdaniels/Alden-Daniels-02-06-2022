@@ -43,6 +43,10 @@ class Graph:
         else:
             raise ValueError
 
+    def remove_nodes_from(self, node_list):
+        for node in node_list:
+            self.remove_node(node)
+
     def node_data(self, node_num):
         return self.nodes[node_num]
 
