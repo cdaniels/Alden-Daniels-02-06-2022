@@ -9,6 +9,9 @@ class Graph:
         self.nodes[node_value] = {}
 
     def add_edge(self, edge_tuple):
+        for node_val in edge_tuple:
+            if not self.has_node(node_val):
+                self.add_node(node_val)
         self.edges[edge_tuple] = {}
 
     def add_nodes_from(self, node_list):
