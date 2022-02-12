@@ -1,6 +1,6 @@
 # test_example_network.py
 
-import unittest, random, string
+import unittest, random, string, math
 
 from src.example_network_package import example_network
 
@@ -192,8 +192,24 @@ class TestExampleNetwork(unittest.TestCase):
         # then an error should be thrown
         self.assertRaises(ValueError, G.remove_node, num)
 
-    # def test_batch_node_removal(self):
-    #     return self.fail("test not yet implemented")
+    def test_batch_node_removal(self):
+        # given a graph with nodes and an array containing a subset of these node's ids
+        rand_length = random.randint(4,100)
+        node_list = []
+        for i in range(rand_length):
+            node_list.append(i)
+        G = example_network.Graph()
+        G.add_nodes_from(node_list)
+        sub_list_end = math.floor(rand_length/2)
+        nodes_to_remove = node_list[0:sub_list_end]
+
+        # when the batch node removal function is called with this array
+        G.remove_nodes_from(nodes_to_remove)
+
+        # then the graph should not contain nodes with the corresponding numbers
+        nodes = G.nodes()
+        for node_to_remove in nodes_to_remove:
+            self.assertNotIn(node_to_remove, nodes)
 
     # def test_edge_removal(self):
     #     return self.fail("test not yet implemented")
