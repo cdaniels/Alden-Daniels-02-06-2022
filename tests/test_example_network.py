@@ -134,43 +134,54 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertIn(test_attr_tuple, [e for e in G.edges])
 
     def test_edge_creation_creates_dependent_nodes(self):
-        return self.fail("test not yet implemented")
+        # given an empty graph and a tuple containing the ids of two nodes 
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        edge = (start_node, end_node)
 
-    def test_node_removal(self):
-        return self.fail("test not yet implemented")
+        # when the edge creation function is called with this
+        G.add_edge(edge)
+        # then the graph should now contain both nodes
+        nodes_in_graph = G.nodes()
+        given_nodes = [start_node, end_node]
+        self.assertEqual(nodes_in_graph, given_nodes)
 
-    def test_non_existent_node_removal_raises_error(self):
-        return self.fail("test not yet implemented")
+    # def test_node_removal(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_batch_node_removal(self):
-        return self.fail("test not yet implemented")
+    # def test_non_existent_node_removal_raises_error(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_edge_removal(self):
-        return self.fail("test not yet implemented")
+    # def test_batch_node_removal(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_non_existent_edge_removal_raises_error(self):
-        return self.fail("test not yet implemented")
+    # def test_edge_removal(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_batch_edge_removal(self):
-        return self.fail("test not yet implemented")
+    # def test_non_existent_edge_removal_raises_error(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_node_removal_removes_dependent_edges(self):
-        return self.fail("test not yet implemented")
+    # def test_batch_edge_removal(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_set_node_attribute(self):
-        return self.fail("test not yet implemented")
+    # def test_node_removal_removes_dependent_edges(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_set_node_attributes(self):
-        return self.fail("test not yet implemented")
+    # def test_set_node_attribute(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_set_edge_attribute(self):
-        return self.fail("test not yet implemented")
+    # def test_set_node_attributes(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_set_edge_ettributes(self):
-        return self.fail("test not yet implemented")
+    # def test_set_edge_attribute(self):
+    #     return self.fail("test not yet implemented")
 
-    def test_plot_opens_window(self):
-        return self.fail("test not yet implemented")
+    # def test_set_edge_ettributes(self):
+    #     return self.fail("test not yet implemented")
+
+    # def test_plot_opens_window(self):
+    #     return self.fail("test not yet implemented")
 
 
 if __name__ == '__main__':
