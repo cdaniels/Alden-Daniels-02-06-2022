@@ -47,6 +47,13 @@ class Graph:
         for node in node_list:
             self.remove_node(node)
 
+    def remove_edge(self, start_node, end_node):
+        if self.has_node(start_node) and self.has_node(end_node):
+            edge_tuple = (start_node, end_node)
+            del self.edges[edge_tuple]
+        else:
+            raise ValueError
+
     def node_data(self, node_num):
         return self.nodes[node_num]
 
