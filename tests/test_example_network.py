@@ -211,8 +211,19 @@ class TestExampleNetwork(unittest.TestCase):
         for node_to_remove in nodes_to_remove:
             self.assertNotIn(node_to_remove, nodes)
 
-    # def test_edge_removal(self):
-    #     return self.fail("test not yet implemented")
+    def test_edge_removal(self):
+        # given a graph containing an edge between two with certain ids 
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        edge = (start_node, end_node)
+        G.add_edge(edge)
+
+        # when the edge removal function is called with this pair of ids
+        G.remove_edge(start_node, end_node)
+        # then the graph should now be empty
+        edges = G.edges()
+        self.assertCountEqual(edges, [])
 
     # def test_non_existent_edge_removal_raises_error(self):
     #     return self.fail("test not yet implemented")
