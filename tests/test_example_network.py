@@ -369,8 +369,37 @@ class TestExampleNetwork(unittest.TestCase):
         # then this value should show up on future node queries
         self.assertEqual(G.nodes[node_id]["attr"], new_attr_val)
 
-    # def test_set_node_attributes(self):
-    #     return self.fail("test not yet implemented")
+    def test_set_node_attributes(self):
+        # given an array of number-attribute tuples of a certain length
+        rand_length = random.randint(1,100)
+        node_list = []
+        node1_id = random.randint(1,rand_length-1)
+        node2_id = random.randint(node1_id,rand_length)
+        test_attr_name = random_word(5)
+        old_attr_val = random_word(5)
+
+        for i in range(rand_length):
+            rand_attr_name = random_word(5)
+            rand_attr_val = random_word(5)
+            node_attr_tuple = (i, {rand_attr_name: rand_attr_val})
+            node_list.append(node_attr_tuple)
+        node1_attr_tuple = (node1_id, {test_attr_name: old_attr_val})
+        node2_attr_tuple = (node2_id, {test_attr_name: old_attr_val})
+        node_list.append(node1_attr_tuple)
+        node_list.append(node2_attr_tuple)
+
+        G = example_network.Graph()
+        G.add_nodes_from(node_list)
+
+        # when the set node attributes function is called
+        new_attr_val = random_word(5)
+        attrs = {node1_id: {test_attr_name: new_attr_val}, node2_id: {test_attr_name: new_attr_val}}
+        example_network.set_node_attributes(G, attrs)
+
+        # then the graph should contain nodes with data corresponding to what was passed
+        node_data = G.nodes.data()
+        self.assertEqual(G.nodes[node1_id][test_attr_name], new_attr_val)
+        self.assertEqual(G.nodes[node2_id][test_attr_name], new_attr_val)
 
     def test_set_edge_attribute(self):
         # given a graph with an edge that has an attribute with a certain value
