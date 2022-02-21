@@ -125,9 +125,12 @@ class EdgeView(dict):
     def __init__(self):
         self._edges = list([])
 
-    def __call__(self):
+    def __call__(self, node=None):
         edge_list = list(self.keys())
-        return edge_list
+        if node is not None:
+            return list([e for e in edge_list if node in e])
+        else:
+            return edge_list
 
     def __delitem__(self, key):
         super().pop(key)
