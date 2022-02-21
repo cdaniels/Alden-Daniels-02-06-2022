@@ -49,9 +49,14 @@ class Graph:
         return graph_has_edge
 
     def remove_node(self, node_value):
+        # if a corresponding node is found remove that node
         if self.has_node(node_value):
             del self.nodes[node_value]
+            # remove dependent edges
+            for edge in self.edges(node_value):
+                del self.edges[edge]
         else:
+            # raise an error if no node is found
             raise ValueError
 
     def remove_nodes_from(self, node_list):
