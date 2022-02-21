@@ -4,6 +4,10 @@ def set_node_attributes(G, attributes):
     for node in attributes.keys():
         G.nodes[node] = attributes[node]
 
+def set_edge_attributes(G, attributes):
+    for edge in attributes.keys():
+        G.edges[edge] = attributes[edge]
+
 class Graph:
     def __init__(self):
         self.nodes = NodeView()
