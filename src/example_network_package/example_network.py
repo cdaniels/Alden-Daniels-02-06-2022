@@ -5,8 +5,8 @@ class Graph:
         self.nodes = NodeView()
         self.edges = EdgeView()
 
-    def add_node(self, node_value):
-        self.nodes[node_value] = {}
+    def add_node(self, node_value, **attributes):
+        self.nodes[node_value] = attributes
 
     def add_edge(self, edge_tuple):
         for node_val in edge_tuple:
@@ -54,6 +54,7 @@ class Graph:
         for node in node_list:
             self.remove_node(node)
 
+
     def remove_edge(self, start_node, end_node):
         if self.has_node(start_node) and self.has_node(end_node):
             edge_tuple = (start_node, end_node)
@@ -63,6 +64,13 @@ class Graph:
                 raise ValueError
         else:
             raise ValueError
+
+    def remove_edges_from(self, edge_list):
+        for edge in edge_list:
+            if type(edge) == tuple:
+                start_node = edge[0]
+                end_node = edge[1]
+                self.remove_edge(start_node, end_node)
 
     def node_data(self, node_num):
         return self.nodes[node_num]
