@@ -37,9 +37,7 @@ class TestExampleNetwork(unittest.TestCase):
         # given an empty graph, a random number, and a collection of keyword values pairs
         G = example_network.Graph()
         test_num = random.randint(1,100)
-        attr2_key = random_word(5)
         attr1_val = random_word(5)
-        attr2_key = random_word(5)
         attr2_val = random_word(5)
 
         # when a node is added with this number as an id and these keywords assigned to the values
@@ -47,10 +45,10 @@ class TestExampleNetwork(unittest.TestCase):
 
         # then the graph should contain a node with data corresponding to what was passed
         node_data = G.nodes.data()
-        self.assertEqual(node_data[test_num][attr2_key], attr1_val)
-        self.assertEqual(G.nodes[test_num][attr2_key], attr1_val)
-        self.assertEqual(node_data[test_num][attr2_key], attr2_val)
-        self.assertEqual(G.nodes[test_num][attr2_key], attr2_val)
+        self.assertEqual(node_data[test_num]["attr1_key"], attr1_val)
+        self.assertEqual(G.nodes[test_num]["attr1_key"], attr1_val)
+        self.assertEqual(node_data[test_num]["attr2_key"], attr2_val)
+        self.assertEqual(G.nodes[test_num]["attr2_key"], attr2_val)
 
 
     def test_batch_node_creation(self):
@@ -139,9 +137,7 @@ class TestExampleNetwork(unittest.TestCase):
         end_node = random.randint(1,100)
         G = example_network.Graph()
         G.add_nodes_from([start_node, end_node])
-        attr2_key = random_word(5)
         attr1_val = random_word(5)
-        attr2_key = random_word(5)
         attr2_val = random_word(5)
 
         # when the edge creation function is called with this
@@ -149,8 +145,8 @@ class TestExampleNetwork(unittest.TestCase):
 
         # then the graph should contain edges with data corresponding to what was passed
         edge_data = G.get_edge_data(start_node, end_node)
-        self.assertEqual(edge_data[attr1_key], attr1_val)
-        self.assertEqual(edge_data[attr2_key], attr2_val)
+        self.assertEqual(edge_data["attr1_key"], attr1_val)
+        self.assertEqual(edge_data["attr2_key"], attr2_val)
 
 
     def test_batch_edge_creation(self):
