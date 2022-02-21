@@ -417,8 +417,41 @@ class TestExampleNetwork(unittest.TestCase):
         # then this value should show up on future edge queries
         self.assertEqual(G.edges[start_node, end_node]["attr"], new_attr_val)
 
-    # def test_set_edge_attributes(self):
-    #     return self.fail("test not yet implemented")
+    def test_set_edge_attributes(self):
+        # given an array of start_node-end_node-attribute tuples
+        rand_length = random.randint(1,100)
+        edge_list = []
+
+        test_attr_name = random_word(5)
+        old_attr_val = random_word(5)
+        start_node1 = random.randint(1,100)
+        start_node2 = random.randint(1,100)
+        end_node1 = random.randint(1,100)
+        end_node2 = random.randint(1,100)
+        edge_tuple_1 = (start_node1, end_node1, {test_attr_name: old_attr_val})
+        edge_tuple_2 = (start_node2, end_node2, {test_attr_name: old_attr_val})
+
+        for i in range(rand_length):
+            start_node = i
+            end_node = random.randint(1,100)
+            rand_attr_name = random_word(5)
+            rand_attr_val = random_word(5)
+            edge_attr_tuple = (start_node, end_node, {rand_attr_name: rand_attr_val})
+            edge_list.append(edge_attr_tuple)
+        edge_list.append(edge_tuple_1)
+        edge_list.append(edge_tuple_2)
+
+        G = example_network.Graph()
+        G.add_edges_from(edge_list)
+
+        # when the set node attributes function is called
+        new_attr_val = random_word(5)
+        attrs = {(start_node1, end_node1): {test_attr_name: new_attr_val}, (start_node2, end_node2): {test_attr_name: new_attr_val}}
+        example_network.set_edge_attributes(G, attrs)
+
+        # then the graph should contain edges with data corresponding to what was passed
+        self.assertEqual(G.edges[start_node1, end_node1][test_attr_name], new_attr_val)
+        self.assertEqual(G.edges[start_node2, end_node2][test_attr_name], new_attr_val)
 
     # def test_plot_opens_window(self):
     #     return self.fail("test not yet implemented")
