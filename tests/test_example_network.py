@@ -1,6 +1,9 @@
 # test_example_network.py
 
-import unittest, random, string, math
+import unittest, random, string, math, sys
+
+sys.path.append('.')
+sys.path.append('./src')
 
 from src.example_network_package import example_network
 
@@ -237,8 +240,28 @@ class TestExampleNetwork(unittest.TestCase):
         # then an error should be thrown
         self.assertRaises(ValueError, G.remove_edge, start_node, end_node)
 
-    # def test_batch_edge_removal(self):
-    #     return self.fail("test not yet implemented")
+    def test_batch_edge_removal(self):
+        # given a graph with edges and an array containing a subset of these edge tuples
+        rand_length = random.randint(1,100)
+        edge_list = []
+        for i in range(rand_length):
+            start_node = i
+            end_node = random.randint(1,100)
+            edge_tuple = (start_node, end_node)
+            edge_list.append(edge_tuple)
+        G = example_network.Graph()
+        G.add_edges_from(edge_list)
+
+        sub_list_end = math.floor(rand_length/2)
+        edges_to_remove = edge_list[0:sub_list_end]
+
+        # when the batch edge removal function is called with this array
+        G.remove_edges_from(edges_to_remove)
+
+        # then the graph should not contain edges for the corresponding tuples
+        edges = G.edges()
+        for edge_to_remove in edges_to_remove:
+            self.assertNotIn(edge_to_remove, edges)
 
     # def test_node_removal_removes_dependent_edges(self):
     #     return self.fail("test not yet implemented")
