@@ -199,6 +199,36 @@ class TestExampleNetwork(unittest.TestCase):
         # then the graph should contain edges with data corresponding to what was passed
         self.assertIn(test_attr_tuple, [e for e in G.edges])
 
+
+    def test_edge_checking_fails_for_non_existent_node(self):
+        # given a graph containing two nodes without any edge between them
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G.add_node(start_node)
+        G.add_node(end_node)
+
+        # when the graph is checked for a edge with the corresponding node ids
+        edge_tuple = (start_node, end_node)
+        graph_has_edge = G.has_edge(edge_tuple)
+        # then the check should come back negative
+        self.assertEqual(graph_has_edge, False)
+
+
+    def test_edge_checking_passes_for_present_node(self):
+        # given a graph containing an edge between two nodes
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        edge = (start_node, end_node)
+        G.add_edge(edge)
+
+        # when the graph is checked for an edge with the corresponding node ids
+        edge_tuple = (start_node, end_node)
+        graph_has_edge = G.has_edge(edge_tuple)
+        # then the check should come back positive
+        self.assertEqual(graph_has_edge, True)
+
     def test_edge_creation_creates_dependent_nodes(self):
         # given an empty graph and a tuple containing the ids of two nodes 
         G = example_network.Graph()
