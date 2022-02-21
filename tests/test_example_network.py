@@ -225,8 +225,17 @@ class TestExampleNetwork(unittest.TestCase):
         edges = G.edges()
         self.assertCountEqual(edges, [])
 
-    # def test_non_existent_edge_removal_raises_error(self):
-    #     return self.fail("test not yet implemented")
+    def test_non_existent_edge_removal_raises_error(self):
+        # given a graph containing nodes with no edges
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G.add_node(start_node)
+        G.add_node(end_node)
+
+        # when the edge removal function is called with this id
+        # then an error should be thrown
+        self.assertRaises(ValueError, G.remove_edge, start_node, end_node)
 
     # def test_batch_edge_removal(self):
     #     return self.fail("test not yet implemented")
