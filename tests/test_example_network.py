@@ -18,7 +18,7 @@ class TestExampleNetwork(unittest.TestCase):
         graph = example_network.Graph()
         # it should have an empty array of nodes and edges
         self.assertEqual(list(graph.nodes), [])
-        # self.assertEqual(graph.edges, [])
+        self.assertEqual(list(graph.edges), [])
 
 
     def test_node_creation(self):
@@ -325,8 +325,35 @@ class TestExampleNetwork(unittest.TestCase):
         for edge_to_remove in edges_to_remove:
             self.assertNotIn(edge_to_remove, edges)
 
-    # def test_node_removal_removes_dependent_edges(self):
-    #     return self.fail("test not yet implemented")
+    def test_node_removal_removes_dependent_edges(self):
+        # given a graph with an edge between nodes with certain starting and ending node ids
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G.add_edge(start_node, end_node)
+
+        # when the node removal function is called with one of the node ids
+        G.remove_node(start_node)
+
+        # then any edges which were adjacent to that node should no longer be there
+        adjacent_edges = G.edges(start_node)
+        edge_tuple = (start_node, end_node)
+        self.assertNotIn(edge_tuple, adjacent_edges)
+
+    def test_adjacent_edges_returned_for_node(self):
+        # given a graph with an edge between nodes with certain starting and ending node ids
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G.add_edge(start_node, end_node)
+
+        # when the edges are accesed with a certain node id passed in
+        adjacent_edges = G.edges(start_node)
+
+        # then the corresponding edge should be returned
+        edge_tuple = (start_node, end_node)
+        self.assertIn(edge_tuple, adjacent_edges)
+
 
     # def test_set_node_attribute(self):
     #     return self.fail("test not yet implemented")
