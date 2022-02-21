@@ -37,6 +37,13 @@ class Graph:
                 graph_has_node = True
         return graph_has_node
 
+    def has_edge(self, edge_tuple):
+        graph_has_edge = False
+        for e in self.edges:
+            if e == edge_tuple:
+                graph_has_edge = True
+        return graph_has_edge
+
     def remove_node(self, node_value):
         if self.has_node(node_value):
             del self.nodes[node_value]
@@ -50,7 +57,10 @@ class Graph:
     def remove_edge(self, start_node, end_node):
         if self.has_node(start_node) and self.has_node(end_node):
             edge_tuple = (start_node, end_node)
-            del self.edges[edge_tuple]
+            if self.has_edge(edge_tuple):
+                del self.edges[edge_tuple]
+            else:
+                raise ValueError
         else:
             raise ValueError
 
