@@ -8,11 +8,13 @@ class Graph:
     def add_node(self, node_value, **attributes):
         self.nodes[node_value] = attributes
 
-    def add_edge(self, edge_tuple):
-        for node_val in edge_tuple:
-            if not self.has_node(node_val):
-                self.add_node(node_val)
-        self.edges[edge_tuple] = {}
+    def add_edge(self, start_node, end_node, **attributes):
+        if not self.has_node(start_node):
+            self.add_node(start_node)
+        if not self.has_node(end_node):
+            self.add_node(end_node)
+        edge_tuple = (start_node, end_node)
+        self.edges[edge_tuple] = attributes
 
     def add_nodes_from(self, node_list):
         for node_value in node_list:
@@ -74,6 +76,10 @@ class Graph:
 
     def node_data(self, node_num):
         return self.nodes[node_num]
+
+    def get_edge_data(self, start_node, end_node):
+        edge_tuple = (start_node, end_node)
+        return self.edges[edge_tuple]
 
 class NodeView(dict):
     def __init__(self):

@@ -125,7 +125,7 @@ class TestExampleNetwork(unittest.TestCase):
         edge = (start_node, end_node)
 
         # when the edge creation function is called with this
-        G.add_edge(edge)
+        G.add_edge(start_node, end_node)
         # then the graph should now contain a corresponding edge
         edge_list = [e for e in G.edges]
         self.assertEqual(edge_list, [edge])
@@ -216,8 +216,7 @@ class TestExampleNetwork(unittest.TestCase):
         G = example_network.Graph()
         start_node = random.randint(1,100)
         end_node = random.randint(1,100)
-        edge = (start_node, end_node)
-        G.add_edge(edge)
+        G.add_edge(start_node, end_node)
 
         # when the graph is checked for an edge with the corresponding node ids
         edge_tuple = (start_node, end_node)
@@ -230,10 +229,9 @@ class TestExampleNetwork(unittest.TestCase):
         G = example_network.Graph()
         start_node = random.randint(1,100)
         end_node = random.randint(1,100)
-        edge = (start_node, end_node)
 
         # when the edge creation function is called with this
-        G.add_edge(edge)
+        G.add_edge(start_node, end_node)
         # then the graph should now contain both nodes
         nodes_in_graph = G.nodes()
         given_nodes = [start_node, end_node]
@@ -284,8 +282,7 @@ class TestExampleNetwork(unittest.TestCase):
         G = example_network.Graph()
         start_node = random.randint(1,100)
         end_node = random.randint(1,100)
-        edge = (start_node, end_node)
-        G.add_edge(edge)
+        G.add_edge(start_node, end_node)
 
         # when the edge removal function is called with this pair of ids
         G.remove_edge(start_node, end_node)
