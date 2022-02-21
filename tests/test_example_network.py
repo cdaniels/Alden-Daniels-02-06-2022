@@ -356,7 +356,7 @@ class TestExampleNetwork(unittest.TestCase):
 
 
     def test_set_node_attribute(self):
-        # given an empty graph, a random number, and a collection of keyword values pairs
+        # given a graph containing a node with a certain attribute value
         G = example_network.Graph()
         node_id = random.randint(1,100)
         old_attr_val = random_word(5)
@@ -372,8 +372,21 @@ class TestExampleNetwork(unittest.TestCase):
     # def test_set_node_attributes(self):
     #     return self.fail("test not yet implemented")
 
-    # def test_set_edge_attribute(self):
-    #     return self.fail("test not yet implemented")
+    def test_set_edge_attribute(self):
+        # given a graph with an edge that has an attribute with a certain value
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_nodes_from([start_node, end_node])
+        old_attr_val = random_word(5)
+        G.add_edge(start_node, end_node, attr=old_attr_val)
+
+        # when a new value is assigned to this edge
+        new_attr_val = random_word(5)
+        G.edges[start_node, end_node]["attr"] = new_attr_val
+
+        # then this value should show up on future edge queries
+        self.assertEqual(G.edges[start_node, end_node]["attr"], new_attr_val)
 
     # def test_set_edge_attributes(self):
     #     return self.fail("test not yet implemented")
