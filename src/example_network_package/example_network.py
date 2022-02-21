@@ -26,11 +26,13 @@ class Graph:
     def add_edges_from(self, edge_list):
         for edge_tuple in edge_list:
             if type(edge_tuple) == tuple:
-                node_tuple = (edge_tuple[0], edge_tuple[1])
+                start_node = edge_tuple[0]
+                end_node = edge_tuple[1]
+                node_tuple = (start_node, end_node)
                 attribute_dict = {}
                 if(len(edge_tuple) > 2):
                     attribute_dict = edge_tuple[2]
-                self.edges[node_tuple] = attribute_dict
+                self.add_edge(start_node, end_node, **attribute_dict)
 
     def has_node(self, node_value):
         graph_has_node = False
