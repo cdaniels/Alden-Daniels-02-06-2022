@@ -1,5 +1,9 @@
 # example graph object
 
+def set_node_attributes(G, attributes):
+    for node in attributes.keys():
+        G.nodes[node] = attributes[node]
+
 class Graph:
     def __init__(self):
         self.nodes = NodeView()
