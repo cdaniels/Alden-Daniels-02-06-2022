@@ -1,5 +1,8 @@
 # example graph object
 
+import math
+from tkinter import *
+
 def set_node_attributes(G, attributes):
     for node in attributes.keys():
         G.nodes[node] = attributes[node]
@@ -7,6 +10,75 @@ def set_node_attributes(G, attributes):
 def set_edge_attributes(G, attributes):
     for edge in attributes.keys():
         G.edges[edge] = attributes[edge]
+
+def draw(G):
+    root = Tk()
+    window = PlotWindow(root)
+    window.plot_graph(G)
+    root.mainloop()
+
+class PlotWindow:
+    def __init__(self, master):
+        # init tk
+        self.root = master
+        # create canvas
+        self.canvas = Canvas(self.root, bg="white", height=300, width=300)
+        # add to window and show
+        self.canvas.pack()
+
+    def plot_graph(self, G):
+        # get number of nodes in grah
+        node_num = len(list(G.nodes))
+        # get the coordinates for vertices of a regular n-gon of this size around the center of the canvas
+        # center = (math.floor(self.canvas.winfo_width()/2), math.floor(self.canvas.winfo_width()/2))
+        center = (150, 150)
+        radius = 120
+        node_coords = self.get_regular_polygon_coords(center, radius, node_num)
+        # get coordinates for each node and draw a circle at those coordinates
+        for i, val in enumerate(G.nodes):
+            coords = node_coords[i]
+            self.draw_node(coords, val)
+
+    def draw_node(self, coords, val):
+        # expand the coordinates
+        x = coords[0]
+        y = coords[1]
+        r = 15
+        # draw a circle at the desired location
+        self.draw_circle(x, y, r)
+        # then create text for the node id at the same location 
+        self.draw_text(x, y, math.floor(r*0.7), val)
+
+    def draw_text(self, x, y, size, text):
+        font = 'Helvetica ' + str(size) + ' bold'
+        self.canvas.create_text(x, y, text=text, fill="black", font=(font))
+
+    def draw_circle(self, x, y, r):
+        x0 = x - r
+        y0 = y - r
+        x1 = x + r
+        y1 = y + r
+        self.canvas.create_oval(x0,y0,x1,y1)
+
+
+
+    def get_regular_polygon_coords(self, center, radius, n):
+        coord_list = []
+        for i in range(n):
+            x = math.floor(center[0] + radius * math.sin((2*math.pi/n) * i))
+            y = math.floor(center[1] + radius * math.cos((2*math.pi/n) * i))
+            coord = (x,y)
+            coord_list.append(coord)
+        return coord_list
+
+    # def _draw_regular_polygon(self, center, radius, n, angle, **kwargs):
+    #     angle -= (math.pi/n)
+    #     coord_list = [[center[0] + radius * math.sin((2*math.pi/n) * i - angle),
+    #         center[1] + radius * math.cos((2*math.pi/n) * i - angle)] for i in range(n)]
+    #     return self.create_polygon(coord_list, **kwargs)
+
+    # Canvas.draw_regular_polygon = _draw_regular_polygon
+
 
 class Graph:
     def __init__(self):

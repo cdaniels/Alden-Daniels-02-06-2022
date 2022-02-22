@@ -453,8 +453,23 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(G.edges[start_node1, end_node1][test_attr_name], new_attr_val)
         self.assertEqual(G.edges[start_node2, end_node2][test_attr_name], new_attr_val)
 
-    # def test_plot_opens_window(self):
-    #     return self.fail("test not yet implemented")
+    def test_plot_opens_window(self):
+        # given an array of tuples representing edges for a graph
+        rand_length = random.randint(1,12)
+        edge_list = []
+        for i in range(rand_length):
+            start_node = i
+            end_node = random.randint(1,100)
+            edge_tuple = (start_node, end_node)
+            edge_list.append(edge_tuple)
+
+        # when the batch edge creation function is called with this array
+        G = example_network.Graph()
+        G.add_edges_from(edge_list)
+        
+        example_network.draw(G)
+        
+        # return self.fail("test not yet implemented")
 
 
 if __name__ == '__main__':
