@@ -1,6 +1,6 @@
 # example graph object
 
-import math
+import math, copy
 from tkinter import *
 
 def set_node_attributes(G, attributes):
@@ -12,59 +12,57 @@ def set_edge_attributes(G, attributes):
         G.edges[edge] = attributes[edge]
 
 def draw(G):
+    # init tk
     root = Tk()
-    window = PlotWindow(root)
-    window.plot_graph(G)
+    window = PlotWindow(root, G)
     root.mainloop()
 
 class PlotWindow:
-    def __init__(self, master):
-        # init tk
+    def __init__(self, master, G):
         self.root = master
-        # create canvas
         self.canvas = Canvas(self.root, bg="white", height=300, width=300)
-        # add to window and show
+        self.graph = copy.copy(G)
+
+        self.plot_graph(self.graph)
         self.canvas.pack()
 
+
     def plot_graph(self, G):
-        # get number of nodes in grah
-        node_num = len(list(G.nodes))
+
+        # add plot positions for all the nodes in the graph
+        self.add_plot_positions_to_graph(G)
+
+        # get coordinates for each node and draw a circle at those coordinates
+        for node_id in G.nodes:
+            self.draw_node(node_id)
+        # for each edge draw a line between its corresponding nodes
+        for start_node, end_node in G.edges:
+            start_point = G.nodes[start_node]["_plot_position"]
+            end_point = G.nodes[end_node]["_plot_position"]
+            self.draw_line(start_point, end_point)
+
+    def add_plot_positions_to_graph(self, G):
+        # get number of nodes in graph
+        node_num = len(G.nodes)
+
         # get the coordinates for vertices of a regular n-gon of this size around the center of the canvas
-        # center = (math.floor(self.canvas.winfo_width()/2), math.floor(self.canvas.winfo_width()/2))
+        # center = (math.floor(self.canvas.winfo_width()/2), math.floor(self.canvas.winfo_width()/2)
         center = (150, 150)
         radius = 120
         coords = self.get_regular_polygon_coords(center, radius, node_num)
-        # get coordinates for each node and draw a circle at those coordinates
-        node_coords = list(zip(coords, list(G.nodes)))
-        for tup in node_coords:
-            coords = tup[0]
-            node_val = tup[1]
-            self.draw_node(coords, node_val)
-        # for each edge draw a line between its corresponding nodes
-        for edge in list(G.edges):
-            start_point = self.get_coords_for_node(node_coords, edge[0])
-            end_point = self.get_coords_for_node(node_coords, edge[1])
-            self.draw_line(start_point, end_point)
-            
+        # for each node in the graph give it the coordinates of one of the n-gon vertices
+        for node_id in G.nodes:
+            x, y = next(coords)
+            G.nodes[node_id]["_plot_position"] = (x,y)
 
-    def get_coords_for_node(self, node_coords, node_val):
-        for tup in node_coords:
-            coords = tup[0]
-            val = tup[1]
-            if val is node_val:
-                return coords
-        return ()
-
-
-    def draw_node(self, coords, val):
+    def draw_node(self, node_id):
         # expand the coordinates
-        x = coords[0]
-        y = coords[1]
+        x, y = self.graph.nodes[node_id]["_plot_position"]
         r = 15
         # draw a circle at the desired location
         self.draw_circle(x, y, r)
         # then create text for the node id at the same location 
-        self.draw_text(x, y, math.floor(r*0.7), val)
+        self.draw_text(x, y, math.floor(r*0.7), node_id)
 
     def draw_text(self, x, y, size, text):
         font = 'Helvetica ' + str(size) + ' bold'
@@ -91,7 +89,7 @@ class PlotWindow:
             y = math.floor(center[1] + radius * math.cos((2*math.pi/n) * i))
             coord = (x,y)
             coord_list.append(coord)
-        return coord_list
+        return iter(coord_list)
 
 
 class Graph:
