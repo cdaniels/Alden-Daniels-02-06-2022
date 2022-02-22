@@ -33,11 +33,28 @@ class PlotWindow:
         # center = (math.floor(self.canvas.winfo_width()/2), math.floor(self.canvas.winfo_width()/2))
         center = (150, 150)
         radius = 120
-        node_coords = self.get_regular_polygon_coords(center, radius, node_num)
+        coords = self.get_regular_polygon_coords(center, radius, node_num)
         # get coordinates for each node and draw a circle at those coordinates
-        for i, val in enumerate(G.nodes):
-            coords = node_coords[i]
-            self.draw_node(coords, val)
+        node_coords = list(zip(coords, list(G.nodes)))
+        for tup in node_coords:
+            coords = tup[0]
+            node_val = tup[1]
+            self.draw_node(coords, node_val)
+        # for each edge draw a line between its corresponding nodes
+        for edge in list(G.edges):
+            start_point = self.get_coords_for_node(node_coords, edge[0])
+            end_point = self.get_coords_for_node(node_coords, edge[1])
+            self.draw_line(start_point, end_point)
+            
+
+    def get_coords_for_node(self, node_coords, node_val):
+        for tup in node_coords:
+            coords = tup[0]
+            val = tup[1]
+            if val is node_val:
+                return coords
+        return ()
+
 
     def draw_node(self, coords, val):
         # expand the coordinates
@@ -60,7 +77,12 @@ class PlotWindow:
         y1 = y + r
         self.canvas.create_oval(x0,y0,x1,y1)
 
-
+    def draw_line(self, start_point, end_point):
+        x1 = start_point[0]
+        y1 = start_point[1]
+        x2 = end_point[0]
+        y2 = end_point[1]
+        self.canvas.create_line(x1, y1, x2, y2)
 
     def get_regular_polygon_coords(self, center, radius, n):
         coord_list = []
@@ -70,14 +92,6 @@ class PlotWindow:
             coord = (x,y)
             coord_list.append(coord)
         return coord_list
-
-    # def _draw_regular_polygon(self, center, radius, n, angle, **kwargs):
-    #     angle -= (math.pi/n)
-    #     coord_list = [[center[0] + radius * math.sin((2*math.pi/n) * i - angle),
-    #         center[1] + radius * math.cos((2*math.pi/n) * i - angle)] for i in range(n)]
-    #     return self.create_polygon(coord_list, **kwargs)
-
-    # Canvas.draw_regular_polygon = _draw_regular_polygon
 
 
 class Graph:
