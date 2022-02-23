@@ -1,6 +1,6 @@
 # example graph object
 
-import math, copy
+import math, copy, time
 from tkinter import *
 
 def set_node_attributes(G, attributes):
@@ -15,6 +15,7 @@ def draw(G):
     # init tk
     root = Tk()
     window = PlotWindow(root, G)
+    window.animate()
     root.mainloop()
 
 class PlotWindow:
@@ -23,9 +24,43 @@ class PlotWindow:
         self.canvas = Canvas(self.root, bg="white", height=300, width=300)
         self.graph = copy.copy(G)
 
+        self.node_radius = 15
+
+        self.refresh_rate = 0.1 # in seconds
+        self.move_inc = 2
+        self.global_repulsie_f = 0.1 # force to repel all nodes to each other
+        self.edge_attractive_f = 0.2 # force to attract adjacent nodes
+    
         self.plot_graph(self.graph)
         self.canvas.pack()
 
+
+    def animate(self):
+        G = self.graph
+        while True:
+            for node_id in G.nodes:
+                circ = G.nodes[node_id]["_plot_circle_id"]
+                label = G.nodes[node_id]["_plot_label_id"]
+                self.canvas.move(circ, self.move_inc, self.move_inc)
+                self.canvas.move(label, self.move_inc, self.move_inc)
+                self.root.update()
+                # move adjacent edges as well
+            for start, end, attr in G.edges:
+                start_circ = G.nodes[start]["_plot_circle_id"]
+                start_coords = self.canvas.coords(start_circ)
+                end_circ = G.nodes[end]["_plot_circle_id"]
+                end_coords = self.canvas.coords(end_circ)
+                r = self.node_radius
+                x1 = start_coords[0] +r
+                y1 = start_coords[1] +r
+                x2 = end_coords[0] + r
+                y2 = end_coords[1] + r
+
+                line = G.edges[start, end]["_plot_line_id"]
+                self.canvas.coords(line, x1, y1, x2, y2)
+                self.root.update()
+
+            time.sleep(self.refresh_rate)
 
     def plot_graph(self, G):
 
@@ -39,7 +74,8 @@ class PlotWindow:
         for start_node, end_node in G.edges:
             start_point = G.nodes[start_node]["_plot_position"]
             end_point = G.nodes[end_node]["_plot_position"]
-            self.draw_line(start_point, end_point)
+            line = self.draw_line(start_point, end_point)
+            G.edges[start_node, end_node]["_plot_line_id"] = line
 
     def add_plot_positions_to_graph(self, G):
         # get number of nodes in graph
@@ -58,29 +94,31 @@ class PlotWindow:
     def draw_node(self, node_id):
         # expand the coordinates
         x, y = self.graph.nodes[node_id]["_plot_position"]
-        r = 15
+        r = self.node_radius
         # draw a circle at the desired location
-        self.draw_circle(x, y, r)
+        circ = self.draw_circle(x, y, r)
         # then create text for the node id at the same location 
-        self.draw_text(x, y, math.floor(r*0.7), node_id)
+        label = self.draw_text(x, y, math.floor(r*0.7), node_id)
+        self.graph.nodes[node_id]["_plot_circle_id"] = circ
+        self.graph.nodes[node_id]["_plot_label_id"] = label
 
     def draw_text(self, x, y, size, text):
         font = 'Helvetica ' + str(size) + ' bold'
-        self.canvas.create_text(x, y, text=text, fill="black", font=(font))
+        return self.canvas.create_text(x, y, text=text, fill="black", font=(font))
 
     def draw_circle(self, x, y, r):
         x0 = x - r
         y0 = y - r
         x1 = x + r
         y1 = y + r
-        self.canvas.create_oval(x0,y0,x1,y1)
+        return self.canvas.create_oval(x0,y0,x1,y1)
 
     def draw_line(self, start_point, end_point):
         x1 = start_point[0]
         y1 = start_point[1]
         x2 = end_point[0]
         y2 = end_point[1]
-        self.canvas.create_line(x1, y1, x2, y2)
+        return self.canvas.create_line(x1, y1, x2, y2)
 
     def get_regular_polygon_coords(self, center, radius, n):
         coord_list = []
