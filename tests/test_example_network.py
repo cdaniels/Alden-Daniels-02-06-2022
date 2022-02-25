@@ -211,12 +211,27 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(graph_has_edge, False)
 
 
-    def test_edge_checking_passes_for_present_node(self):
+    def test_edge_checking_passes_for_present_edge(self):
         # given a graph containing an edge between two nodes
         G = example_network.Graph()
         start_node = random.randint(1,100)
         end_node = random.randint(1,100)
         G.add_edge(start_node, end_node)
+
+        # when the graph is checked for an edge with the corresponding node ids
+        edge_tuple = (start_node, end_node)
+        graph_has_edge = G.has_edge(edge_tuple)
+        # then the check should come back positive
+        self.assertEqual(graph_has_edge, True)
+
+
+    def test_edge_checking_passes_for_present_edge_with_attributes(self):
+        # given a graph containing an edge between two nodes
+        G = example_network.Graph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        attr_val = random_word(5)
+        G.add_edge(start_node, end_node, attr=attr_val)
 
         # when the graph is checked for an edge with the corresponding node ids
         edge_tuple = (start_node, end_node)
@@ -453,23 +468,26 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(G.edges[start_node1, end_node1][test_attr_name], new_attr_val)
         self.assertEqual(G.edges[start_node2, end_node2][test_attr_name], new_attr_val)
 
-    def test_plot_opens_window(self):
-        # given an array of tuples representing edges for a graph
-        rand_length = random.randint(1,12)
-        edge_list = []
-        for i in range(rand_length):
-            start_node = i
-            end_node = random.randint(1,100)
-            edge_tuple = (start_node, end_node)
-            edge_list.append(edge_tuple)
+    # def test_plot_window_calculates_distance_between_nodes(self):
 
-        # when the batch edge creation function is called with this array
-        G = example_network.Graph()
-        G.add_edges_from(edge_list)
+
+    # def test_plot_opens_window(self):
+    #     # given an array of tuples representing edges for a graph
+    #     rand_length = random.randint(1,12)
+    #     edge_list = []
+    #     for i in range(rand_length):
+    #         start_node = i
+    #         end_node = random.randint(1,100)
+    #         edge_tuple = (start_node, end_node)
+    #         edge_list.append(edge_tuple)
+
+    #     # when the batch edge creation function is called with this array
+    #     G = example_network.Graph()
+    #     G.add_edges_from(edge_list)
         
-        example_network.draw(G)
+    #     example_network.draw(G)
         
-        # return self.fail("test not yet implemented")
+    #     # return self.fail("test not yet implemented")
 
 
 if __name__ == '__main__':
