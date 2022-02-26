@@ -203,7 +203,6 @@ class PlotWindow:
             coord_list.append(coord)
         return iter(coord_list)
 
-
 class Graph:
     def __init__(self):
         self.nodes = NodeView()
@@ -377,5 +376,17 @@ class EdgeViewIterator:
         raise StopIteration
 
 
-# class NodeDataView:
-#     def __init__(self):
+class MultiGraph(Graph):
+    def __init__(self):
+        super().__init__()
+
+
+class DiGraph(Graph):
+    def __init__(self):
+        super().__init__()
+
+
+class MultiDiGraph(MultiGraph, DiGraph):
+    def __init__(self):
+        super().__init__()
+
