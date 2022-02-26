@@ -468,26 +468,64 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(G.edges[start_node1, end_node1][test_attr_name], new_attr_val)
         self.assertEqual(G.edges[start_node2, end_node2][test_attr_name], new_attr_val)
 
-    # def test_plot_window_calculates_distance_between_nodes(self):
+
+    def test_multigraph_instantiation(self):
+        # given the multigraph class, when it is instantiated
+        G = example_network.MultiGraph()
+        # it should have an empty array of nodes and edges
+        self.assertEqual(list(G.nodes), [])
+        self.assertEqual(list(G.edges), [])
 
 
-    def test_plot_opens_window(self):
-        # given an array of tuples representing edges for a graph
-        rand_length = 40
-        edge_list = []
-        for i in range(rand_length):
-            start_node = random.randint(1,10)
-            end_node = random.randint(1,10)
-            edge_tuple = (start_node, end_node)
-            edge_list.append(edge_tuple)
+    def test_multigraph_multiple_edge_creation_creates_distinct_edges(self):
+        return False
 
-        # when the batch edge creation function is called with this array
-        G = example_network.Graph()
-        G.add_edges_from(edge_list)
+    def test_multigraph_edge_removal_removes_distinct_edge(self):
+        return self.fail("not yet implemented")
+
+    def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
+        return self.fail("not yet implemented")
+
+    def test_digraph_instantiation(self):
+        # given the digraph class, when it is instantiated
+        G = example_network.DiGraph()
+        # it should have an empty array of nodes and edges
+        self.assertEqual(list(G.nodes), [])
+        self.assertEqual(list(G.edges), [])
+
+    def test_digraph_edge_creation_creates_directed_edges(self):
+        return self.fail("not yet implemented")
+
+    def test_digraph_adjacent_edge_query_returns_only_outgoing_edges(self):
+        return self.fail("not yet implemented")
         
-        example_network.draw(G)
+    def test_multidigraph_instantiation(self):
+        # given the multidigraph class, when it is instantiated
+        G = example_network.MultiDiGraph()
+        # it should have an empty array of nodes and edges
+        self.assertEqual(list(G.nodes), [])
+        self.assertEqual(list(G.edges), [])
+
+    def test_multidigrah_multiple_edge_creation_creates_distinct_directed_edges(self):
+        return self.fail("not yet implemented")
+
+    # def test_plot_opens_window_with_graph_display(self):
+    #     # given an array of tuples representing edges for a graph
+    #     rand_length = 40
+    #     edge_list = []
+    #     for i in range(rand_length):
+    #         start_node = random.randint(1,10)
+    #         end_node = random.randint(1,10)
+    #         edge_tuple = (start_node, end_node)
+    #         edge_list.append(edge_tuple)
+
+    #     # when the batch edge creation function is called with this array
+    #     G = example_network.Graph()
+    #     G.add_edges_from(edge_list)
         
-        # return self.fail("test not yet implemented")
+    #     example_network.draw(G)
+        
+    #     # return self.fail("test not yet implemented")
 
 
 if __name__ == '__main__':
