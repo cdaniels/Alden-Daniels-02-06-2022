@@ -14,22 +14,26 @@ def set_edge_attributes(G, attributes):
 def draw(G):
     # init tk
     root = Tk()
-    window = PlotWindow(root, G)
+    window = PlotWindow(root, 800, 600, G)
     window.animate()
     root.mainloop()
 
 class PlotWindow:
-    def __init__(self, master, G):
+    def __init__(self, master, width, height, G):
         self.root = master
-        self.canvas = Canvas(self.root, bg="white", height=300, width=300)
+        self.w, self.h = width, height
+        self.canvas = Canvas(self.root, bg="white", height=self.h, width=self.w)
         self.graph = copy.copy(G)
 
         self.node_radius = 15
 
-        self.refresh_rate = 0.1 # in seconds
-        self.move_inc = 2
-        self.global_repulsie_f = 0.1 # force to repel all nodes to each other
-        self.edge_attractive_f = 0.2 # force to attract adjacent nodes
+        self.refresh_rate = 0.01 # in seconds
+        self.global_repulsie_f = -1.0 # force to repel all nodes to each other
+        self.edge_attractive_f = 2.0 # force to attract adjacent nodes
+
+        self.node_dist_max_threshold = self.h * 0.4 # maximum distance for nodes to seperate
+        self.node_dist_min_threshold = self.node_radius * 4 # maximum distance for nodes to seperate
+        self.center_dist_max_threshold = self.h * 0.4 # maximum distance for nodes to seperate
     
         self.plot_graph(self.graph)
         self.canvas.pack()
@@ -37,30 +41,97 @@ class PlotWindow:
 
     def animate(self):
         G = self.graph
-        while True:
-            for node_id in G.nodes:
-                circ = G.nodes[node_id]["_plot_circle_id"]
-                label = G.nodes[node_id]["_plot_label_id"]
-                self.canvas.move(circ, self.move_inc, self.move_inc)
-                self.canvas.move(label, self.move_inc, self.move_inc)
-                self.root.update()
-                # move adjacent edges as well
-            for start, end, attr in G.edges:
-                start_circ = G.nodes[start]["_plot_circle_id"]
-                start_coords = self.canvas.coords(start_circ)
-                end_circ = G.nodes[end]["_plot_circle_id"]
-                end_coords = self.canvas.coords(end_circ)
-                r = self.node_radius
-                x1 = start_coords[0] +r
-                y1 = start_coords[1] +r
-                x2 = end_coords[0] + r
-                y2 = end_coords[1] + r
-
-                line = G.edges[start, end]["_plot_line_id"]
-                self.canvas.coords(line, x1, y1, x2, y2)
-                self.root.update()
-
+        start_time = time.time()
+        while (time.time() - start_time < 2):
+            self.increment_dynamics()
             time.sleep(self.refresh_rate)
+
+    def increment_dynamics(self):
+        G = self.graph
+        for start_node in G.nodes:
+            for end_node in G.nodes:
+                if start_node != end_node:
+                    move_vec = self.calculate_move_vec_between_nodes(start_node, end_node);
+                    self.move_node_plot_by_vec(start_node, move_vec)
+
+    def calculate_move_vec_between_nodes(self, start_node, end_node):
+        G = self.graph
+        start_point = G.nodes[start_node]["_plot_position"]
+        end_point = G.nodes[end_node]["_plot_position"]
+
+        center_point = (self.w/2, self.h/2)
+        center_vec = self.get_vec_between_points(start_point, center_point)
+        center_dist = self.abs_len_of_vec(center_vec)
+
+        sep_vec = self.get_vec_between_points(start_point, end_point)
+        sep_dist = self.abs_len_of_vec(sep_vec)
+        norm_sep_vec = self.normalize_vec(sep_vec)
+        repulse = self.multiply_vec_by_scalar(norm_sep_vec, self.global_repulsie_f)
+        attract = self.multiply_vec_by_scalar(norm_sep_vec, self.edge_attractive_f)
+
+        # apply general forces if seperation vector is below max threshold and above min threshold
+        move_vec = [0,0]
+        if sep_dist < self.node_dist_max_threshold and center_dist < self.center_dist_max_threshold:
+            move_vec = self.add_vec_to_vec(move_vec, repulse)
+        if sep_dist > self.node_dist_min_threshold and (G.has_edge((start_node, end_node)) or G.has_edge((end_node, start_node))):
+            move_vec = self.add_vec_to_vec(move_vec, attract)
+        return tuple(move_vec)
+
+    def move_node_plot_by_vec(self, node_id, move_vec):
+        G = self.graph
+        circ = G.nodes[node_id]["_plot_circle_id"]
+        label = G.nodes[node_id]["_plot_label_id"]
+        self.canvas.move(circ, move_vec[0], move_vec[1])
+        self.canvas.move(label, move_vec[0], move_vec[1])
+
+        for edge in G.edges(node_id):
+            self.update_edge_plot(edge[0], edge[1])
+
+        self.root.update()
+
+    def multiply_vec_by_scalar(self, vec, scalar):
+        return tuple(list(map(lambda x: x * scalar, vec)))
+
+    def add_vec_to_vec(self, vec1, vec2):
+        sum_vec = [0, 0]
+        sum_vec[0] = vec1[0] + vec2[0]
+        sum_vec[1] = vec1[1] + vec2[1]
+        return sum_vec
+
+    def abs_len_of_vec(self, vec):
+        tot = 0
+        for elem in vec:
+            tot = tot + elem**2
+        return math.sqrt(tot)
+
+    def update_edge_plot(self, start, end):
+        G = self.graph
+        start_circ = G.nodes[start]["_plot_circle_id"]
+        start_coords = self.canvas.coords(start_circ)
+        end_circ = G.nodes[end]["_plot_circle_id"]
+        end_coords = self.canvas.coords(end_circ)
+        r = self.node_radius
+        x1 = start_coords[0] +r
+        y1 = start_coords[1] +r
+        x2 = end_coords[0] + r
+        y2 = end_coords[1] + r
+
+        line = G.edges[(start, end)]["_plot_line_id"]
+        self.canvas.coords(line, x1, y1, x2, y2)
+        self.root.update()
+
+    def get_vec_between_points(self, start_point, end_point):
+        x1 = start_point[0]
+        y1 = start_point[1]
+        x2 = end_point[0]
+        y2 = end_point[1]
+        vec = (x2-x1, y2-y1)
+        return vec
+    
+    def normalize_vec(self, vec):
+        vec_mag = self.abs_len_of_vec(vec)
+        norm_vec = self.multiply_vec_by_scalar(vec, 1/vec_mag)
+        return norm_vec
 
     def plot_graph(self, G):
 
@@ -71,11 +142,14 @@ class PlotWindow:
         for node_id in G.nodes:
             self.draw_node(node_id)
         # for each edge draw a line between its corresponding nodes
-        for start_node, end_node in G.edges:
-            start_point = G.nodes[start_node]["_plot_position"]
-            end_point = G.nodes[end_node]["_plot_position"]
-            line = self.draw_line(start_point, end_point)
-            G.edges[start_node, end_node]["_plot_line_id"] = line
+        for edge in G.edges:
+            start_node = edge[0]
+            end_node = edge[1]
+            if "_plot_line_id" not in G.edges[start_node, end_node]:
+                start_point = G.nodes[start_node]["_plot_position"]
+                end_point = G.nodes[end_node]["_plot_position"]
+                line = self.draw_line(start_point, end_point)
+                G.edges[start_node, end_node]["_plot_line_id"] = line
 
     def add_plot_positions_to_graph(self, G):
         # get number of nodes in graph
@@ -83,8 +157,8 @@ class PlotWindow:
 
         # get the coordinates for vertices of a regular n-gon of this size around the center of the canvas
         # center = (math.floor(self.canvas.winfo_width()/2), math.floor(self.canvas.winfo_width()/2)
-        center = (150, 150)
-        radius = 120
+        center = (self.w/2, self.h/2)
+        radius = self.h * 0.4
         coords = self.get_regular_polygon_coords(center, radius, node_num)
         # for each node in the graph give it the coordinates of one of the n-gon vertices
         for node_id in G.nodes:
@@ -174,7 +248,7 @@ class Graph:
     def has_edge(self, edge_tuple):
         graph_has_edge = False
         for e in self.edges:
-            if e == edge_tuple:
+            if e[0] == edge_tuple[0] and e[1] == edge_tuple[1]:
                 graph_has_edge = True
         return graph_has_edge
 
