@@ -558,9 +558,27 @@ class TestExampleNetwork(unittest.TestCase):
         edges = G.edges()
         self.assertEqual(len(edges), 1)
 
-    # def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
-    #     return self.fail("not yet implemented")
+    def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
+        # given a multigraph with two edges which have key values and weights
+        G = example_network.MultiGraph()
+        # start_node = random.randint(1,10)
+        # end_node = random.randint(1,10)
+        start_node = 5
+        end_node = 4
+        key_val1 = "xyz"
+        key_val2 = "abc"
+        old_weight1 = random.randint(1,50)
+        old_weight2 = random.randint(1,50)
+        new_weight = 60
+        G.add_edge(start_node, end_node, key=key_val1, weight=old_weight1)
+        G.add_edge(start_node, end_node, key=key_val2, weight=old_weight2)
 
+        # when an edge is added with one of the same key values and a new weight
+        G.add_edge(start_node, end_node, key=key_val1, weight=new_weight)
+
+        # then the edge should be updated with the new weight
+        edge_data = G.get_edge_data(start_node, end_node, key=key_val1)
+        self.assertEqual(edge_data, {'key':key_val1, 'weight': new_weight})
 
     # def test_multidigrah_multiple_edge_creation_creates_distinct_directed_edges(self):
     #     return self.fail("not yet implemented")
