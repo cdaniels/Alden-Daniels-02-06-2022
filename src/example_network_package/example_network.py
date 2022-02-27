@@ -1,6 +1,6 @@
 # example graph object
 
-import math, copy, time
+import math, copy, time, random
 from tkinter import *
 
 def set_node_attributes(G, attributes):
@@ -85,7 +85,12 @@ class PlotWindow:
         self.canvas.move(label, move_vec[0], move_vec[1])
 
         for edge in G.edges(node_id):
-            self.update_edge_plot(edge[0], edge[1])
+            if(type(self.graph) == MultiGraph):
+                edge_data = G[node_id][edge]
+                for data in edge_data:
+                    self.update_edge_plot(node_id, edge, data)
+            else:
+                self.update_edge_plot(edge[0], edge[1])
 
         self.root.update()
 
@@ -104,20 +109,35 @@ class PlotWindow:
             tot = tot + elem**2
         return math.sqrt(tot)
 
-    def update_edge_plot(self, start, end):
+    def update_edge_plot(self, start, end, edge_index=None):
         G = self.graph
         start_circ = G.nodes[start]["_plot_circle_id"]
         start_coords = self.canvas.coords(start_circ)
         end_circ = G.nodes[end]["_plot_circle_id"]
         end_coords = self.canvas.coords(end_circ)
         r = self.node_radius
-        x1 = start_coords[0] + r
-        y1 = start_coords[1] + r
-        x2 = end_coords[0] + r
-        y2 = end_coords[1] + r
 
-        line = G.edges[(start, end)]["_plot_line_id"]
-        self.canvas.coords(line, x1, y1, x2, y2)
+        if type(self.graph) == MultiGraph and edge_index != None:
+            r = r + random.randint(-4,4)
+            x1 = start_coords[0] + r
+            y1 = start_coords[1] + r
+            x2 = end_coords[0] + r
+            y2 = end_coords[1] + r
+            in_edge_tuple = (start, end, edge_index)
+            out_edge_tuple = (end, start, edge_index)
+            if in_edge_tuple in G.edges:
+                line = G.edges[in_edge_tuple]["_plot_line_id"]
+                self.canvas.coords(line, x1, y1, x2, y2)
+            elif out_edge_tuple in G.edges:
+                line = G.edges[out_edge_tuple]["_plot_line_id"]
+                self.canvas.coords(line, x1, y1, x2, y2)
+        else:
+            x1 = start_coords[0] + r
+            y1 = start_coords[1] + r
+            x2 = end_coords[0] + r
+            y2 = end_coords[1] + r
+            line = G.edges[(start, end)]["_plot_line_id"]
+            self.canvas.coords(line, x1, y1, x2, y2)
         self.root.update()
 
     def get_vec_between_points(self, start_point, end_point):
@@ -142,14 +162,26 @@ class PlotWindow:
         for node_id in G.nodes:
             self.draw_node(node_id)
         # for each edge draw a line between its corresponding nodes
-        for edge in G.edges:
-            start_node = edge[0]
-            end_node = edge[1]
-            if "_plot_line_id" not in G.edges[start_node, end_node]:
-                start_point = G.nodes[start_node]["_plot_position"]
-                end_point = G.nodes[end_node]["_plot_position"]
-                line = self.draw_line(start_point, end_point)
-                G.edges[start_node, end_node]["_plot_line_id"] = line
+        if type(self.graph) == MultiGraph:
+            for edge in G.edges:
+                start_node = edge[0]
+                end_node = edge[1]
+                edge_index = edge[2]
+                if "_plot_line_id" not in G.edges[start_node, end_node, edge_index]:
+                    start_point = G.nodes[start_node]["_plot_position"]
+                    end_point = G.nodes[end_node]["_plot_position"]
+                    line = self.draw_line(start_point, end_point)
+                    G.edges[start_node, end_node, edge_index]["_plot_line_id"] = line
+
+        else:
+            for edge in G.edges:
+                start_node = edge[0]
+                end_node = edge[1]
+                if "_plot_line_id" not in G.edges[start_node, end_node]:
+                    start_point = G.nodes[start_node]["_plot_position"]
+                    end_point = G.nodes[end_node]["_plot_position"]
+                    line = self.draw_line(start_point, end_point)
+                    G.edges[start_node, end_node]["_plot_line_id"] = line
 
     def add_plot_positions_to_graph(self, G):
         # get number of nodes in graph
