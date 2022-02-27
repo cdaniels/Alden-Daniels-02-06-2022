@@ -395,7 +395,7 @@ class OutEdgeView(EdgeView):
 class MultiGraph(Graph):
     def __init__(self):
         super().__init__()
-        self.edges = AdjacencyView()
+        self.edges = MultiEdgeView()
         self.edge_indices = set()
 
     def __getitem__(self, item):
@@ -411,13 +411,26 @@ class MultiGraph(Graph):
         self.edges[(start_node, end_node, edge_index)] = attributes
         self.edge_indices.add(edge_index)
 
+    def remove_edge(self, start_node, end_node):
+        if self.has_node(start_node) and self.has_node(end_node):
+            edge_tuple = (start_node, end_node)
+            if self.has_edge(edge_tuple):
+                for e in self.edges:
+                    if e[0] == start_node and e[1] == end_node:
+                        del self.edges[e]
+                        break
+            else:
+                raise ValueError
+        else:
+            raise ValueError
+
     def get_next_edge_index(self):
         index = 0;
         while index in self.edge_indices:
             index = index + 1
         return index
 
-class AdjacencyView(EdgeView):
+class MultiEdgeView(EdgeView):
     def __call__(self, node=None):
         edge_list = list(self.keys())
         if node is not None:
@@ -433,6 +446,27 @@ class AdjacencyView(EdgeView):
             return adjacency_dict
         else:
             return edge_list
+
+    def __iter__(self):
+        return MultiEdgeViewIterator(self)
+
+class MultiEdgeViewIterator:
+    def __init__(self, multiedge_view):
+        self._index = 0
+        self._multiedge_view = multiedge_view
+
+    def __next__(self):
+        if(self._index < len(self._multiedge_view._edges)):
+            item = self._multiedge_view._edges[self._index]
+            self._index += 1
+            attributes_dict = self._multiedge_view[item]
+            edge_tuple = ()
+            if(len(attributes_dict.keys()) > 0) :
+                edge_tuple = (item[0], item[1], item[2], attributes_dict)
+            else:
+                edge_tuple = (item[0], item[1], item[2])
+            return edge_tuple
+        raise StopIteration
 
 class MultiDiGraph(MultiGraph, DiGraph):
     def __init__(self):
