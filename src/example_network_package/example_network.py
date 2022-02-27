@@ -111,8 +111,8 @@ class PlotWindow:
         end_circ = G.nodes[end]["_plot_circle_id"]
         end_coords = self.canvas.coords(end_circ)
         r = self.node_radius
-        x1 = start_coords[0] +r
-        y1 = start_coords[1] +r
+        x1 = start_coords[0] + r
+        y1 = start_coords[1] + r
         x2 = end_coords[0] + r
         y2 = end_coords[1] + r
 
@@ -188,11 +188,14 @@ class PlotWindow:
         return self.canvas.create_oval(x0,y0,x1,y1)
 
     def draw_line(self, start_point, end_point):
-        x1 = start_point[0]
+        x1 = start_point[0] 
         y1 = start_point[1]
         x2 = end_point[0]
         y2 = end_point[1]
-        return self.canvas.create_line(x1, y1, x2, y2)
+        if(type(self.graph) == DiGraph):
+            return self.canvas.create_line(x1, y1, x2, y2, arrow=LAST)
+        else:
+            return self.canvas.create_line(x1, y1, x2, y2)
 
     def get_regular_polygon_coords(self, center, radius, n):
         coord_list = []
