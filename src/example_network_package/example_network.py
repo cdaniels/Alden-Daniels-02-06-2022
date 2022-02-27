@@ -407,6 +407,14 @@ class MultiGraph(Graph):
         if not self.has_node(end_node):
             self.add_node(end_node)
 
+        # if an edge exists with the same key then update that one
+        if 'key' in attributes:
+            for e in self.edges:
+                if e[0] == start_node and e[1] == end_node and attributes['key'] == e[3]['key']:
+                    edge_index = e[2]
+                    self.edges[(start_node, end_node, edge_index)] = attributes
+                    return
+        # otherwise create a new edge
         edge_index = self.get_next_edge_index()
         self.edges[(start_node, end_node, edge_index)] = attributes
         self.edge_indices.add(edge_index)
@@ -429,6 +437,12 @@ class MultiGraph(Graph):
         while index in self.edge_indices:
             index = index + 1
         return index
+
+    def get_edge_data(self, start_node, end_node, **attributes):
+        for e in self.edges:
+            if e[0] == start_node and e[1] == end_node and attributes['key'] == e[3]['key']:
+                return self.edges[(e[0], e[1], e[2])]
+        return None
 
 class MultiEdgeView(EdgeView):
     def __call__(self, node=None):
