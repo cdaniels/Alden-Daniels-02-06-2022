@@ -131,6 +131,22 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(edge_list, [edge])
 
 
+    def test_edges_can_be_accessed_by_subscript(self):
+        # given a graph with two nodes and an edge connecting those nodes
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_nodes_from([start_node, end_node])
+        edge = (start_node, end_node)
+        G.add_edge(start_node, end_node)
+
+        # when the sfirst node is passed as a subscript to the graph
+        edge_list = G[start_node]
+
+        # then a list of adjacent edges should be returned
+        self.assertEqual(edge_list, [edge])
+
+
     def test_edge_creation_with_attributes(self):
         # given a graph with two nodes and a tuple containing the ids of the nodes along with a collection of key value pairs
         start_node = random.randint(1,100)
@@ -482,7 +498,7 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(list(G.nodes), [])
         self.assertEqual(list(G.edges), [])
 
-    def test_digraph_adjacent_edge_query_returns_only_outgoing_edges(self)::
+    def test_digraph_adjacent_edge_query_returns_only_outgoing_edges(self):
         # given a digraph with two nodes and an edge created between these nodes
         node1 = random.randint(1,100)
         node2 = random.randint(1,100)
@@ -496,24 +512,10 @@ class TestExampleNetwork(unittest.TestCase):
 
         # when adjacent edges are queried for the starting node
         edge_list = G.edges(node1)
+        subscript_edge_list = G[node1]
         # then! only edges incedent to this node should be returned
         self.assertEqual(edge_list, [(node1, node2)])
-
-
-    # def test_multigraph_multiple_edge_creation_creates_distinct_edges(self):
-    #     return self.fail("not yet implemented")
-    #     # start_node = random.randint(1,10)
-    #     # end_node = random.randint(1,10)
-    #     # # attr1_val = random_word(5)
-    #     # G.add_edges_from([(start_node, end_node, {"route": 28}), (start_node, end_node, {"route": 37})])
-    #     # return self.fail("not yet implemented")
-
-    # def test_multigraph_edge_removal_removes_distinct_edge(self):
-    #     return self.fail("not yet implemented")
-
-    # def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
-    #     return self.fail("not yet implemented")
-
+        self.assertEqual(subscript_edge_list, [(node1, node2)])
         
     def test_multidigraph_instantiation(self):
         # given the multidigraph class, when it is instantiated
@@ -521,6 +523,25 @@ class TestExampleNetwork(unittest.TestCase):
         # it should have an empty array of nodes and edges
         self.assertEqual(list(G.nodes), [])
         self.assertEqual(list(G.edges), [])
+
+    def test_multigraph_multiple_edge_creation_creates_distinct_edges(self):
+        G = example_network.MultiGraph()
+        start_node = random.randint(1,10)
+        end_node = random.randint(1,10)
+        # attr1_val = random_word(5)
+        edges_to_add = [(start_node, end_node, {"route": 28}), (start_node, end_node, {"route": 37})]
+        G.add_edges_from(edges_to_add)
+
+        # when adjacent edges are queried for the start node
+        edge_list = G[start_node]
+        self.assertEqual(edge_list, edges_to_add)
+
+    # def test_multigraph_edge_removal_removes_distinct_edge(self):
+    #     return self.fail("not yet implemented")
+
+    # def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
+    #     return self.fail("not yet implemented")
+
 
     # def test_multidigrah_multiple_edge_creation_creates_distinct_directed_edges(self):
     #     return self.fail("not yet implemented")
