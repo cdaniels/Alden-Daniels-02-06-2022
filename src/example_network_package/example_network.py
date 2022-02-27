@@ -208,6 +208,9 @@ class Graph:
         self.nodes = NodeView()
         self.edges = EdgeView()
 
+    def __getitem__(self, item):
+        return self.edges(item)
+
     def add_node(self, node_value, **attributes):
         self.nodes[node_value] = attributes
 
@@ -376,15 +379,9 @@ class EdgeViewIterator:
             return edge_tuple
         raise StopIteration
 
-
-class MultiGraph(Graph):
-    def __init__(self):
-        super().__init__()
-
 class DiGraph(Graph):
     def __init__(self):
         super().__init__()
-        # self.nodes = NodeView()
         self.edges = OutEdgeView()
 
 class OutEdgeView(EdgeView):
@@ -392,6 +389,48 @@ class OutEdgeView(EdgeView):
         edge_list = list(self.keys())
         if node is not None:
             return list([e for e in edge_list if e[0] == node])
+        else:
+            return edge_list
+
+class MultiGraph(Graph):
+    def __init__(self):
+        super().__init__()
+        self.edges = AdjacencyView()
+        self.edge_indices = set()
+
+    def __getitem__(self, item):
+        return self.edges(item)
+
+    def add_edge(self, start_node, end_node, **attributes):
+        if not self.has_node(start_node):
+            self.add_node(start_node)
+        if not self.has_node(end_node):
+            self.add_node(end_node)
+
+        edge_index = self.get_next_edge_index()
+        self.edges[(start_node, end_node, edge_index)] = attributes
+        self.edge_indices.add(edge_index)
+
+    def get_next_edge_index(self):
+        index = 0;
+        while index in self.edge_indices:
+            index = index + 1
+        return index
+
+class AdjacencyView(EdgeView):
+    def __call__(self, node=None):
+        edge_list = list(self.keys())
+        if node is not None:
+            adjacency_dict = {}
+            for e in edge_list:
+                start_node = e[0]
+                end_node = e[1]
+                edge_index = e[2]
+                if start_node == node:
+                    if end_node not in adjacency_dict: adjacency_dict[end_node] = {}
+                    attr = self[e]
+                    adjacency_dict[end_node].update({edge_index: attr})
+            return adjacency_dict
         else:
             return edge_list
 
