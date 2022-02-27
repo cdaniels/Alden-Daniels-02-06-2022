@@ -457,6 +457,10 @@ class MultiEdgeView(EdgeView):
                     if end_node not in adjacency_dict: adjacency_dict[end_node] = {}
                     attr = self[e]
                     adjacency_dict[end_node].update({edge_index: attr})
+                if end_node == node:
+                    if start_node not in adjacency_dict: adjacency_dict[start_node] = {}
+                    attr = self[e]
+                    adjacency_dict[start_node].update({edge_index: attr})
             return adjacency_dict
         else:
             return edge_list
@@ -482,7 +486,30 @@ class MultiEdgeViewIterator:
             return edge_tuple
         raise StopIteration
 
-class MultiDiGraph(MultiGraph, DiGraph):
+
+class MultiDiGraph(MultiGraph):
     def __init__(self):
         super().__init__()
+        self.edges = MultiOutEdgeView()
+
+
+class MultiOutEdgeView(EdgeView):
+    def __call__(self, node=None):
+        edge_list = list(self.keys())
+        if node is not None:
+            adjacency_dict = {}
+            for e in edge_list:
+                start_node = e[0]
+                end_node = e[1]
+                edge_index = e[2]
+                if start_node == node:
+                    if end_node not in adjacency_dict: adjacency_dict[end_node] = {}
+                    attr = self[e]
+                    adjacency_dict[end_node].update({edge_index: attr})
+            return adjacency_dict
+        else:
+            return edge_list
+
+    def __iter__(self):
+        return MultiEdgeViewIterator(self)
 
