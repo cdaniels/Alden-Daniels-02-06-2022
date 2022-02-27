@@ -85,7 +85,7 @@ class PlotWindow:
         self.canvas.move(label, move_vec[0], move_vec[1])
 
         for edge in G.edges(node_id):
-            if(type(self.graph) == MultiGraph):
+            if(issubclass(type(G), MultiGraph)):
                 edge_data = G[node_id][edge]
                 for data in edge_data:
                     self.update_edge_plot(node_id, edge, data)
@@ -117,7 +117,7 @@ class PlotWindow:
         end_coords = self.canvas.coords(end_circ)
         r = self.node_radius
 
-        if type(self.graph) == MultiGraph and edge_index != None:
+        if issubclass(type(self.graph), MultiGraph) and edge_index != None:
             r = r + random.randint(-4,4)
             x1 = start_coords[0] + r
             y1 = start_coords[1] + r
@@ -162,7 +162,7 @@ class PlotWindow:
         for node_id in G.nodes:
             self.draw_node(node_id)
         # for each edge draw a line between its corresponding nodes
-        if type(self.graph) == MultiGraph:
+        if  issubclass(type(self.graph), MultiGraph):
             for edge in G.edges:
                 start_node = edge[0]
                 end_node = edge[1]
@@ -224,7 +224,7 @@ class PlotWindow:
         y1 = start_point[1]
         x2 = end_point[0]
         y2 = end_point[1]
-        if(type(self.graph) == DiGraph):
+        if(issubclass(type(self.graph), DiGraph)):
             return self.canvas.create_line(x1, y1, x2, y2, arrow=LAST)
         else:
             return self.canvas.create_line(x1, y1, x2, y2)
@@ -522,7 +522,7 @@ class MultiEdgeViewIterator:
         raise StopIteration
 
 
-class MultiDiGraph(MultiGraph):
+class MultiDiGraph(MultiGraph, DiGraph):
     def __init__(self):
         super().__init__()
         self.edges = MultiOutEdgeView()
