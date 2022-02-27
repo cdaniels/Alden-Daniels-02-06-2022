@@ -357,6 +357,7 @@ class EdgeView(dict):
     def data(self):
         return self
 
+
 class EdgeViewIterator:
     def __init__(self, edge_view):
         self._index = 0
@@ -380,11 +381,19 @@ class MultiGraph(Graph):
     def __init__(self):
         super().__init__()
 
-
 class DiGraph(Graph):
     def __init__(self):
         super().__init__()
+        # self.nodes = NodeView()
+        self.edges = OutEdgeView()
 
+class OutEdgeView(EdgeView):
+    def __call__(self, node=None):
+        edge_list = list(self.keys())
+        if node is not None:
+            return list([e for e in edge_list if e[0] == node])
+        else:
+            return edge_list
 
 class MultiDiGraph(MultiGraph, DiGraph):
     def __init__(self):
