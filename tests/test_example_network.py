@@ -544,8 +544,19 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertIn(edge_attr1, adjacency_list[end_node].values())
         self.assertIn(edge_attr2, adjacency_list[end_node].values())
 
-    # def test_multigraph_edge_removal_removes_distinct_edge(self):
-    #     return self.fail("not yet implemented")
+    def test_multigraph_edge_removal_removes_distinct_edge(self):
+        # given a multigraph containing two dge between two with certain ids 
+        G = example_network.MultiGraph()
+        start_node = random.randint(1,100)
+        end_node = random.randint(1,100)
+        G.add_edge(start_node, end_node)
+        G.add_edge(start_node, end_node)
+
+        # when the edge removal function is called with this pair of ids
+        G.remove_edge(start_node, end_node)
+        # then the graph should now contain 1 edge
+        edges = G.edges()
+        self.assertEqual(len(edges), 1)
 
     # def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
     #     return self.fail("not yet implemented")
