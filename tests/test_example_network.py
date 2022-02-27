@@ -526,15 +526,23 @@ class TestExampleNetwork(unittest.TestCase):
 
     def test_multigraph_multiple_edge_creation_creates_distinct_edges(self):
         G = example_network.MultiGraph()
-        start_node = random.randint(1,10)
-        end_node = random.randint(1,10)
+        # start_node = random.randint(1,10)
+        # end_node = random.randint(1,10)
+        start_node = 5
+        end_node = 4
+        edge_attr1 = {"route": 28}
+        edge_attr2 = {"route": 37}
         # attr1_val = random_word(5)
-        edges_to_add = [(start_node, end_node, {"route": 28}), (start_node, end_node, {"route": 37})]
+        edges_to_add = [(start_node, end_node, edge_attr1), (start_node, end_node, edge_attr2)]
         G.add_edges_from(edges_to_add)
 
         # when adjacent edges are queried for the start node
-        edge_list = G[start_node]
-        self.assertEqual(edge_list, edges_to_add)
+        adjacency_list = G[start_node]
+
+        # then both new edges should appear in the returned list
+        # self.assertEqual(edges_to_add, adjacency_list)
+        self.assertIn(edge_attr1, adjacency_list[end_node].values())
+        self.assertIn(edge_attr2, adjacency_list[end_node].values())
 
     # def test_multigraph_edge_removal_removes_distinct_edge(self):
     #     return self.fail("not yet implemented")
