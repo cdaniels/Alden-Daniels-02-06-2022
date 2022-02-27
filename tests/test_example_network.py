@@ -484,6 +484,26 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(G.edges[start_node1, end_node1][test_attr_name], new_attr_val)
         self.assertEqual(G.edges[start_node2, end_node2][test_attr_name], new_attr_val)
 
+
+    def test_adjacent_edge_query_returns_both_incoming_and_outgoing_edges(self):
+        # given a digraph with two nodes and an edge created between these nodes
+        node1 = random.randint(1,100)
+        node2 = random.randint(1,100)
+        node3 = random.randint(1,100)
+        G = example_network.Graph()
+        G.add_nodes_from([node1, node2, node3])
+        edge1 = (node1, node2)
+        edge2 = (node2, node3)
+        edge3 = (node3, node1)
+        G.add_edges_from([edge1, edge2, edge3])
+
+        # when adjacent edges are queried for the starting node
+        edge_list = G.edges(node1)
+        subscript_edge_list = G[node1]
+        # then! only edges incedent to this node should be returned
+        self.assertEqual(edge_list, [edge1, edge3])
+        self.assertEqual(subscript_edge_list, [edge1, edge3])
+
     def test_multigraph_instantiation(self):
         # given the multigraph class, when it is instantiated
         G = example_network.MultiGraph()
@@ -517,13 +537,6 @@ class TestExampleNetwork(unittest.TestCase):
         self.assertEqual(edge_list, [(node1, node2)])
         self.assertEqual(subscript_edge_list, [(node1, node2)])
         
-    def test_multidigraph_instantiation(self):
-        # given the multidigraph class, when it is instantiated
-        G = example_network.MultiDiGraph()
-        # it should have an empty array of nodes and edges
-        self.assertEqual(list(G.nodes), [])
-        self.assertEqual(list(G.edges), [])
-
     def test_multigraph_multiple_edge_creation_creates_distinct_edges(self):
         G = example_network.MultiGraph()
         # start_node = random.randint(1,10)
@@ -558,6 +571,27 @@ class TestExampleNetwork(unittest.TestCase):
         edges = G.edges()
         self.assertEqual(len(edges), 1)
 
+
+    def test_multigraph_adjacent_edge_query_returns_both_incoming_and_outgoing_edges(self):
+        # given a digraph with two nodes and an edge created between these nodes
+        node1 = random.randint(1,100)
+        node2 = random.randint(1,100)
+        node3 = random.randint(1,100)
+        G = example_network.MultiGraph()
+        G.add_nodes_from([node1, node2, node3])
+        edge1 = (node1, node2)
+        edge2 = (node2, node3)
+        edge3 = (node3, node1)
+        G.add_edges_from([edge1, edge2, edge3])
+
+        # when adjacent edges are queried for the starting node
+        edge_list = G.edges(node1)
+        subscript_edge_list = G[node1]
+        # then! only edges incedent to this node should be returned
+        expected_multiedge_list = {node2: {0: {}}, node3: {2: {}}}
+        self.assertEqual(edge_list, expected_multiedge_list)
+        self.assertEqual(subscript_edge_list, expected_multiedge_list)
+
     def test_multigraph_setting_edge_attribute_updates_distinct_edge(self):
         # given a multigraph with two edges which have key values and weights
         G = example_network.MultiGraph()
@@ -580,8 +614,53 @@ class TestExampleNetwork(unittest.TestCase):
         edge_data = G.get_edge_data(start_node, end_node, key=key_val1)
         self.assertEqual(edge_data, {'key':key_val1, 'weight': new_weight})
 
-    # def test_multidigrah_multiple_edge_creation_creates_distinct_directed_edges(self):
-    #     return self.fail("not yet implemented")
+    def test_multidigraph_instantiation(self):
+        # given the multidigraph class, when it is instantiated
+        G = example_network.MultiDiGraph()
+        # it should have an empty array of nodes and edges
+        self.assertEqual(list(G.nodes), [])
+        self.assertEqual(list(G.edges), [])
+
+    def test_multidigraph_adjacent_edge_query_returns_only_outgoing_edges(self):
+        # given a multidigraph with two nodes and an edge created between these nodes
+        node1 = random.randint(1,100)
+        node2 = random.randint(1,100)
+        node3 = random.randint(1,100)
+        G = example_network.MultiDiGraph()
+        G.add_nodes_from([node1, node2, node3])
+        edge1 = (node1, node2)
+        edge2 = (node1, node2)
+        edge3 = (node2, node3)
+        edge4 = (node3, node1)
+        G.add_edges_from([edge1, edge2, edge3, edge4])
+
+        # when adjacent edges are queried for the starting node
+        edge_list = G.edges(node1)
+        subscript_edge_list = G[node1]
+        # then only edges incedent to this node should be returned
+        expected_multiedge_list = {node2: {0: {}, 1:{}}}
+        self.assertEqual(edge_list, expected_multiedge_list)
+        self.assertEqual(subscript_edge_list, expected_multiedge_list)
+
+    def test_multidigraph_setting_edge_attribute_updates_distinct_edge(self):
+        # given a multigraph with two edges which have key values and weights
+        G = example_network.MultiDiGraph()
+        start_node = 5
+        end_node = 4
+        key_val1 = "xyz"
+        key_val2 = "abc"
+        old_weight1 = random.randint(1,50)
+        old_weight2 = random.randint(1,50)
+        new_weight = 60
+        G.add_edge(start_node, end_node, key=key_val1, weight=old_weight1)
+        G.add_edge(start_node, end_node, key=key_val2, weight=old_weight2)
+
+        # when an edge is added with one of the same key values and a new weight
+        G.add_edge(start_node, end_node, key=key_val1, weight=new_weight)
+
+        # then the edge should be updated with the new weight
+        edge_data = G.get_edge_data(start_node, end_node, key=key_val1)
+        self.assertEqual(edge_data, {'key':key_val1, 'weight': new_weight})
 
     # def test_plot_opens_window_with_graph_display(self):
     #     # given an array of tuples representing edges for a graph
